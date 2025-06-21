@@ -36,7 +36,7 @@ router.post('/create', upload.single('image'), (req, res) => {
 
     productModel.create(newProduct)
         .then(product => {
-           res.redirect('/owners/admin');
+           res.redirect('/shop'); // Redirect to shop page after successful creation
         })
         .catch(err => {
             res.status(500).json({ error: 'Error creating product', details: err.message });

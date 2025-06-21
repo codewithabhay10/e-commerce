@@ -32,21 +32,10 @@ module.exports.registerUser = async (req, res) => {
         return res.status(500).json({ error: "Error hashing password" });
       }
 
-      let user = await userModel
-        .create({ fullname, email, password: hash })
-        .then((user) => {
-          res
-            .status(201)
-            .json({ message: "User registered successfully", user });
-        })
-        .catch((err) => {
-          res
-            .status(500)
-            .json({ error: "Error registering user", details: err.message });
-        });
-
+      let user = await userModel.create({ fullname, email, password: hash });
       let token = generateToken(user);
       res.cookie("token", token);
+      res.redirect("/");
     });
   });
 };
@@ -75,7 +64,7 @@ module.exports.loginUser = async (req, res) => {
 
     let token = generateToken(user);
     res.cookie("token", token);
-    res.status(200).json({ message: "Login successful", user });
+    res.redirect("/shop");
   });
 };
 
