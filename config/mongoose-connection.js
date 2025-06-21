@@ -2,16 +2,19 @@ const mongoose = require('mongoose');
 const dbgr = require('debug')('development:mongoose-connection');
 const config = require('config');
 
+const connect = () => {
+    dbgr('Connecting to MongoDB...');
+    mongoose.connect(`${config.get('MONGODB_URI')}`)
+        .then(() => {
+            dbgr('MongoDB connection established successfully');
+        })
+        .catch((error) => {
+            dbgr('MongoDB connection error:', error);
+        });
+};
 
-mongoose.connect(`${config.get('MONGODB_URI')}`)
-    .then(() => {
-        dbgr('MongoDB connection established successfully');
-    })
-    .catch((error) => {
-        dbgr('MongoDB connection error:', error);
-    });
+module.exports = { connect };
 
-module.exports = mongoose.connection;
 // This code establishes a connection to a MongoDB database using Mongoose.
 // It connects to the database using a connection string and logs a success message if the connection is successful.
 // If there is an error during the connection, it logs the error message to the console.

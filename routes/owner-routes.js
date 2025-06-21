@@ -26,5 +26,9 @@ if (process.env.NODE_ENV === "development") {
     });
 }
 
+router.get('/admin', async (req, res) => {
+    let success = req.flash("success", "Welcome to the admin panel! You can create products here.");
+    res.render("createproducts", { success });
+});
 
 module.exports = router;
