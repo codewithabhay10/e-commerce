@@ -69,13 +69,8 @@ module.exports.loginUser = async (req, res) => {
 };
 
 module.exports.logout = (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).json({ error: "Logout failed" });
-    }
     res.clearCookie("token");
     req.flash("success", "Logged out successfully");
     res.redirect("/");
-  });
 };
 

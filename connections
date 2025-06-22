@@ -1,0 +1,41 @@
+// vite mei 
+//use axios for api calls
+
+import axios from 'axios';
+import { useEffect } from 'react';
+useEffect(() => {
+  // Example GET request
+axios.get('/api/some-endpoint')
+  .then(response => {
+    console.log('Data fetched successfully:', response.data);
+  }
+    )
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        }
+    );
+}, []);
+
+// Example POST request
+axios.post('/api/submit-form', {    
+    name: 'John Doe',
+    email: 'john.doe@example.com'
+})
+  .then(response => {
+    console.log('Form submitted successfully:', response.data);
+  })
+  .catch(error => {
+    console.error('Error submitting form:', error);
+  });
+
+// in vite.config.js
+export default {
+    server: {
+        proxy: {
+            '/api': {
+                target: 'http://localhost:3000',
+                changeOrigin: true
+            }
+        }
+    }
+}
