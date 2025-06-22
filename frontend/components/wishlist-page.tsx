@@ -55,10 +55,10 @@ export function WishlistPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {items.map((product) => (
-          <Card key={product.id} className="group">
+          <Card key={product._id} className="group">
             <CardContent className="p-0">
               <div className="relative overflow-hidden rounded-t-lg">
-                <Link href={`/product/${product.id}`}>
+                <Link href={`/product/${product._id}`}>
                   <img
                     src={product.image || "/placeholder.svg"}
                     alt={product.title}
@@ -72,7 +72,7 @@ export function WishlistPage() {
                 )}
               </div>
               <div className="p-4">
-                <Link href={`/product/${product.id}`}>
+                <Link href={`/product/${product._id}`}>
                   <h3 className="font-semibold text-lg mb-2 line-clamp-2 hover:text-primary cursor-pointer">
                     {product.title}
                   </h3>
@@ -93,7 +93,7 @@ export function WishlistPage() {
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     Add to Cart
                   </Button>
-                  <Button variant="outline" onClick={() => handleRemoveFromWishlist(product.id, product.title)}>
+                  <Button variant="outline" onClick={() => handleRemoveFromWishlist(product._id, product.title)}>
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
                   </Button>
                 </div>
