@@ -12,10 +12,9 @@ import { useAuth } from "@/components/auth-provider"
 import { useToast } from "@/hooks/use-toast"
 
 export function SignupForm() {
-  const [name, setName] = useState("")
+  const [fullname, setFullname] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
   const { toast } = useToast()
@@ -24,10 +23,10 @@ export function SignupForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (password !== confirmPassword) {
+    if (!fullname || !email || !password) {
       toast({
-        title: "Error",
-        description: "Passwords do not match.",
+        title: "Missing fields",
+        description: "Please fill in all fields.",
         variant: "destructive",
       })
       return
@@ -36,7 +35,7 @@ export function SignupForm() {
     setLoading(true)
 
     try {
-      const success = await signup(email, password, name)
+      const success = await signup(email, password, fullname)
       if (success) {
         toast({
           title: "Account created",
@@ -74,10 +73,10 @@ export function SignupForm() {
               Full Name
             </label>
             <Input
-              id="name"
+              id="fullname"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
               required
               placeholder="Your full name"
             />
@@ -106,19 +105,6 @@ export function SignupForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
-            />
-          </div>
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1">
-              Confirm Password
-            </label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              placeholder="Confirm your password"
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

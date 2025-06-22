@@ -6,100 +6,67 @@ const productModel = require("../models/product-model");
 
 // Default route
 router.get("/", (req, res) => {
-  let error = req.flash("error");
-  res.render("index", {
-    title: "Home",
-    error: error.length > 0 ? error[0] : null,
-    loggedin: false,
-  });
+  res.json({ message: "Welcome to the API" });
 });
 
+// Admin route (for creating products)
 router.get("/admin", isLoggedIn, (req, res) => {
-  let success = req.flash("success", "Welcome to the admin panel! You can create products here.");
-  res.render("createproducts", { success });
+  res.json({ message: "Welcome to the admin panel! You can create products here." });
 });
 
-router.get("/shop", isLoggedIn, (req, res) => {
-  productModel.find()
-    .then(products => {
-      let success = req.flash("success");
-      res.render("shop", { user: req.user, products, title: "Shop", success });
-    })
-    .catch(err => { 
-      req.flash("error", "Failed to load products");
-      res.redirect("/");
-    });
-});
-
-// Profile route
-router.get("/profile", isLoggedIn, (req, res) => {
-  userModel.findById(req.user._id)
-    .then(user => {
-      if (!user) {
-        req.flash("error", "User not found");
-        return res.redirect("/");
-      }
-      res.render("profile", {
-        title: "Profile",
-        user
-      });
-    })
-    .catch(err => {
-      req.flash("error", "Failed to load profile");
-      res.redirect("/");
-    });
-});
-
-// Add to cart route
-router.get("/cart/add/:id", isLoggedIn, async (req, res) => {
-  let user = await userModel.findOne({ _id: req.user._id });
-  let product = await productModel.findOne({ _id: req.params.id });
-
-  if (!user) {
-    req.flash("error", "User not found");
-    return res.redirect("/shop");
+// Get all products (shop)
+router.get("/shop", isLoggedIn, async (req, res) => {
+  try {
+    const products = await productModel.find();
+    res.json({ user: req.user, products });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load products" });
   }
-
-  if (!product) {
-    req.flash("error", "Product not found");
-    return res.redirect("/shop");
-  }
-
-  // Check if product is already in cart
-  let cartItem = user.cart.find(item => item.product.equals(product._id));
-  if (cartItem) {
-    cartItem.quantity += 1;
-  } else {
-    user.cart.push({ product: product._id, quantity: 1 });
-  }
-
-  await user.save();
-  req.flash("success", "Product added to cart");
-  res.redirect("/shop");
 });
 
-// GET cart route
+// Get profile
+router.get("/profile", isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load profile" });
+  }
+});
+
+// Add to cart
+router.post("/cart/add/:id", isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id);
+    const product = await productModel.findById(req.params.id);
+
+    if (!user || !product) return res.status(404).json({ error: "User or product not found" });
+
+    const cartItem = user.cart.find(item => item.product.equals(product._id));
+    if (cartItem) {
+      cartItem.quantity += 1;
+    } else {
+      user.cart.push({ product: product._id, quantity: 1 });
+    }
+
+    await user.save();
+    res.json({ message: "Product added to cart" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add product to cart" });
+  }
+});
+
+// Get cart
 router.get("/cart", isLoggedIn, async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id).populate("cart.product");
-
-    if (!user) {
-      req.flash("error", "User not found");
-      return res.redirect("/shop");
-    }
-
-    res.render("cart", {
-      title: "Cart",
-      cart: user.cart || [],
-      user,
-    });
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ cart: user.cart || [] });
   } catch (err) {
-    console.error("Error fetching cart:", err);
-    req.flash("error", "Failed to load cart");
-    res.redirect("/shop");
+    res.status(500).json({ error: "Failed to load cart" });
   }
 });
-
 
 // Increment quantity
 router.post("/cart/increment/:id", isLoggedIn, async (req, res) => {
@@ -113,11 +80,9 @@ router.post("/cart/increment/:id", isLoggedIn, async (req, res) => {
       await user.save();
     }
 
-    res.redirect("/cart");
+    res.json({ message: "Item quantity incremented" });
   } catch (err) {
-    console.error(err);
-    req.flash("error", "Something went wrong while incrementing");
-    res.redirect("/cart");
+    res.status(500).json({ error: "Something went wrong while incrementing" });
   }
 });
 
@@ -130,22 +95,19 @@ router.post("/cart/decrement/:id", isLoggedIn, async (req, res) => {
     const cartItem = user.cart.find(item => item.product.equals(productId));
     if (cartItem) {
       cartItem.quantity -= 1;
-      // Remove if quantity goes to 0
       if (cartItem.quantity <= 0) {
         user.cart = user.cart.filter(item => !item.product.equals(productId));
       }
       await user.save();
     }
 
-    res.redirect("/cart");
+    res.json({ message: "Item quantity decremented" });
   } catch (err) {
-    console.error(err);
-    req.flash("error", "Something went wrong while decrementing");
-    res.redirect("/cart");
+    res.status(500).json({ error: "Something went wrong while decrementing" });
   }
 });
 
-// Remove item completely
+// Remove item from cart
 router.post("/cart/remove/:id", isLoggedIn, async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
@@ -154,28 +116,19 @@ router.post("/cart/remove/:id", isLoggedIn, async (req, res) => {
     user.cart = user.cart.filter(item => !item.product.equals(productId));
     await user.save();
 
-    req.flash("success", "Item removed from cart");
-    res.redirect("/cart");
+    res.json({ message: "Item removed from cart" });
   } catch (err) {
-    console.error(err);
-    req.flash("error", "Something went wrong while removing item");
-    res.redirect("/cart");
+    res.status(500).json({ error: "Something went wrong while removing item" });
   }
 });
 
-
-
-// Logout route
+// Logout
 router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      req.flash("error", "Failed to log out");
-      return res.redirect("/");
-    }
-    req.flash("success", "Logged out successfully");
-    res.redirect("/");
+  req.logout(err => {
+    if (err) return res.status(500).json({ error: "Failed to log out" });
+    res.json({ message: "Logged out successfully" });
   });
 });
 
-// Exporting the router
 module.exports = router;
+// This is the main index file for the backend routes

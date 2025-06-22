@@ -16,6 +16,12 @@ db.connect(); // Connect to the database
 
 // Initialize Express application
 const app = express();
+const cors = require("cors")
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}))
 
 app.use(cookieParser());
 app.use(express.json());
@@ -32,10 +38,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 
 
-app.use('/', indexRoutes);
-app.use('/owners', ownerRoutes);
-app.use('/users', userRoutes);
-app.use('/products', productRoutes);
+app.use('/api', indexRoutes);
+app.use('/api/owners', ownerRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 
-app.listen(4000); // Start the server on port 4000
+app.listen(5000); // Start the server on port 5000

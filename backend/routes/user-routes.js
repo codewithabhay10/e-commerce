@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
 });
 
 // Placeholder for user registration endpoint
-router.post("/register", registerUser);
+router.post("/signup", registerUser);
 
 router.post("/login", loginUser);
 
