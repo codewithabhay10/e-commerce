@@ -289,13 +289,53 @@ export function AdminDashboard() {
                       <SelectItem value="minimalist">Minimalist</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    value={newProduct.image}
-                    onChange={(e) =>
-                      setNewProduct({ ...newProduct, image: e.target.value })
-                    }
-                  />
+                  <div className="space-y-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        const formData = new FormData();
+                        formData.append("image", file);
+
+                        try {
+                          const res = await fetch(
+                            "http://localhost:5000/api/products/upload",
+                            {
+                              method: "POST",
+                              body: formData,
+                            }
+                          );
+
+                          const data = await res.json();
+                          setNewProduct((prev) => ({
+                            ...prev,
+                            image: data.url,
+                          }));
+                          toast({
+                            title: "Upload successful",
+                            description: "Image uploaded and ready to use.",
+                          });
+                        } catch {
+                          toast({
+                            title: "Upload failed",
+                            description: "Could not upload image.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                    />
+                    {newProduct.image && (
+                      <img
+                        src={newProduct.image}
+                        alt="Preview"
+                        className="w-24 h-24 rounded object-cover"
+                      />
+                    )}
+                  </div>
+
                   <div className="flex space-x-2">
                     <Button onClick={handleAddProduct} className="flex-1">
                       Add Product
