@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import Link from "next/link"
 import { Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -31,8 +30,8 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
     e.preventDefault()
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id)
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id)
       toast({
         title: "Removed from wishlist",
         description: `${product.title} has been removed from your wishlist.`,
@@ -47,7 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <Link href={`/product/${product.id}`}>
+    <Link href={`/product/${product._id}`}>
       <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
         <CardContent className="p-0">
           <div className="relative overflow-hidden rounded-t-lg">
@@ -58,7 +57,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
             <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Button size="icon" variant="secondary" className="h-8 w-8" onClick={handleWishlistToggle}>
-                <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+                <Heart className={`h-4 w-4 ${isInWishlist(product._id) ? "fill-red-500 text-red-500" : ""}`} />
               </Button>
             </div>
             {product.sale && (

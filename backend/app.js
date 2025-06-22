@@ -13,7 +13,6 @@ require('dotenv').config();
 db.connect(); // Connect to the database
 // This code initializes an Express application, sets up middleware for parsing cookies and JSON, and serves static files.
 
-
 // Initialize Express application
 const app = express();
 const cors = require("cors")

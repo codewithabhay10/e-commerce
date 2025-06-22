@@ -1,24 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { mockProducts } from "@/lib/mock-data"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { Product } from "@/lib/types"
 
+const productsPerPage = 12
+
 export function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>(mockProducts)
+  const [products, setProducts] = useState<Product[]>([])
   const [sortBy, setSortBy] = useState("featured")
   const [currentPage, setCurrentPage] = useState(1)
-  const productsPerPage = 12
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/products")
+        const data = await res.json()
+        setProducts(data)
+      } catch (err) {
+        console.error("Failed to load products:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   const sortProducts = (products: Product[], sortBy: string) => {
     switch (sortBy) {
       case "price-low":
-        return [...products].sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price))
+        return [...products].sort((a, b) => (a.salePrice ?? a.price) - (b.salePrice ?? b.price))
       case "price-high":
-        return [...products].sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price))
+        return [...products].sort((a, b) => (b.salePrice ?? b.price) - (a.salePrice ?? a.price))
       case "name":
         return [...products].sort((a, b) => a.title.localeCompare(b.title))
       case "newest":
@@ -56,11 +79,15 @@ export function ProductGrid() {
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-        {currentProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {currentProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

@@ -1,32 +1,53 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
 import { Heart, ShoppingCart, ZoomIn, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useCart } from "@/components/cart-provider"
 import { useWishlist } from "@/components/wishlist-provider"
 import { useToast } from "@/hooks/use-toast"
-import { mockProducts } from "@/lib/mock-data"
+import type { Product } from "@/lib/types"
 
-interface ProductDetailProps {
-  productId: string
-}
-
-export function ProductDetail({ productId }: ProductDetailProps) {
-  const product = mockProducts.find((p) => p.id === productId)
+export function ProductDetail() {
+  const { id } = useParams()
+  const [product, setProduct] = useState<Product | null>(null)
   const [selectedSize, setSelectedSize] = useState("medium")
   const [quantity, setQuantity] = useState(1)
   const [isZoomed, setIsZoomed] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const { addItem } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const { toast } = useToast()
 
-  if (!product) {
-    return <div className="container mx-auto px-4 py-8">Product not found</div>
-  }
+  useEffect(() => {
+    if (!id) return
+    const fetchProduct = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${id}`)
+        if (!res.ok) throw new Error("Failed to fetch product")
+        const data = await res.json()
+        setProduct(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProduct()
+  }, [id])
+
+  if (loading) return <div className="container mx-auto px-4 py-8">Loading...</div>
+  if (!product) return <div className="container mx-auto px-4 py-8">Product not found</div>
 
   const sizes = [
     { id: "small", name: "Small (12x16)", price: product.price },
@@ -45,7 +66,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         price: finalPrice,
         size: selectedSize,
       },
-      quantity,
+      quantity
     )
     toast({
       title: "Added to cart",
@@ -54,18 +75,12 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   }
 
   const handleWishlistToggle = () => {
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id)
-      toast({
-        title: "Removed from wishlist",
-        description: `${product.title} has been removed from your wishlist.`,
-      })
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id)
+      toast({ title: "Removed from wishlist", description: `${product.title} removed.` })
     } else {
       addToWishlist(product)
-      toast({
-        title: "Added to wishlist",
-        description: `${product.title} has been added to your wishlist.`,
-      })
+      toast({ title: "Added to wishlist", description: `${product.title} added.` })
     }
   }
 
@@ -109,12 +124,16 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <Star
                     key={i}
                     className={`h-4 w-4 ${
-                      i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-300"
+                      i < Math.floor(product.rating || 5)
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-600">({product.reviews} reviews)</span>
+              <span className="text-sm text-gray-600">
+                ({product.reviews || 0} reviews)
+              </span>
             </div>
             <div className="flex items-center space-x-3 mb-4">
               {product.sale ? (
@@ -149,7 +168,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           {/* Quantity Selection */}
           <div>
             <label className="block text-sm font-medium mb-2">Quantity</label>
-            <Select value={quantity.toString()} onValueChange={(value) => setQuantity(Number.parseInt(value))}>
+            <Select value={quantity.toString()} onValueChange={(val) => setQuantity(parseInt(val))}>
               <SelectTrigger className="w-24">
                 <SelectValue />
               </SelectTrigger>
@@ -170,7 +189,11 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               Add to Cart
             </Button>
             <Button variant="outline" onClick={handleWishlistToggle} className="px-4">
-              <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
+              <Heart
+                className={`h-4 w-4 ${
+                  isInWishlist(product._id) ? "fill-red-500 text-red-500" : ""
+                }`}
+              />
             </Button>
           </div>
 

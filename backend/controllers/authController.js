@@ -42,6 +42,7 @@ module.exports.registerUser = async (req, res) => {
           id: user._id,
           email: user.email,
           fullname: user.fullname,
+          role: user.role,
         },
         token,
       });
@@ -79,6 +80,7 @@ module.exports.loginUser = async (req, res) => {
         id: user._id,
         email: user.email,
         fullname: user.fullname,
+        role: user.role,
       },
       token,
     });

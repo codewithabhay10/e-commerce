@@ -1,46 +1,55 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const upload = require('../config/multer-config');
-const productModel = require('../models/product-model'); // Assuming you have a product model
-// Importing multer configuration for file uploads
-// This is a product routes file that handles product-related endpoints
+const Product = require("../models/product-model");
 
-router.get('/', (req, res) => {
-    res.send('Product Routes');
+// GET all products
+router.get("/", async (req, res) => {
+  const products = await Product.find().sort({ createdAt: -1 });
+  res.json(products);
 });
 
-router.post('/create', upload.single('image'), (req, res) => {
-    if (!req.body) {
-        return res.status(400).json({ error: 'Request body is missing' });
+// POST a new product
+router.post("/", async (req, res) => {
+  console.log("Incoming data:", req.body); // ✅ Add this
+  const { title, description, price, category, image } = req.body;
+  if (!title || !price) {
+    return res.status(400).json({ error: "Title and Price are required." });
+  }
+  const product = await Product.create({
+    title,
+    description,
+    price,
+    category,
+    image: image || "/placeholder.svg",
+  });
+  res.status(201).json(product);
+});
+
+// PUT - Update product
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const updated = await Product.findByIdAndUpdate(id, req.body, { new: true });
+  res.json(updated);
+});
+
+//Get product by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id)
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" })
     }
+    res.json(product)
+  } catch (err) {
+    res.status(500).json({ error: "Server error" })
+  }
+})
 
-    const { name, price , discount , bgcolor , panelcolor , textcolor } = req.body;
-
-    // Validate request body
-    if (!name || !price || !req.file) {
-        return res.status(400).json({ error: 'Name, price, and description are required' });
-    }
-
-    const newProduct = {
-        name,
-        image: {
-            data: req.file.buffer,
-            contentType: req.file.mimetype
-        },
-        price,
-        discount,
-        bgcolor,
-        panelcolor,
-        textcolor
-    };
-
-    productModel.create(newProduct)
-        .then(product => {
-           res.redirect('/shop'); // Redirect to shop page after successful creation
-        })
-        .catch(err => {
-            res.status(500).json({ error: 'Error creating product', details: err.message });
-        });
+// DELETE product
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  await Product.findByIdAndDelete(id);
+  res.json({ message: "Product deleted" });
 });
 
 module.exports = router;

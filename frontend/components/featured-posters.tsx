@@ -1,11 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ProductCard } from "@/components/product-card"
-import { mockProducts } from "@/lib/mock-data"
+import type { Product } from "@/lib/types"
 
 export function FeaturedPosters() {
-  const [featuredProducts, setFeaturedProducts] = useState(mockProducts.slice(0, 8))
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/products")
+        const data: Product[] = await res.json()
+        setFeaturedProducts(data.slice(0, 8)) // Just pick first 8 as "featured"
+      } catch (error) {
+        console.error("Failed to fetch featured products", error)
+      }
+    }
+
+    fetchFeaturedProducts()
+  }, [])
 
   return (
     <section className="py-16">
@@ -19,7 +33,7 @@ export function FeaturedPosters() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product._id || (product as any).id} product={product} />
           ))}
         </div>
       </div>
