@@ -1,22 +1,20 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAuth } from "@/components/auth-provider"
-import { useToast } from "@/hooks/use-toast"
 
 export function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
-  const { toast } = useToast()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,23 +24,18 @@ export function LoginForm() {
     try {
       const success = await login(email, password)
       if (success) {
-        toast({
-          title: "Login successful",
+        toast.success("Login successful", {
           description: "Welcome back!",
         })
         router.push("/")
       } else {
-        toast({
-          title: "Login failed",
+        toast.error("Login failed", {
           description: "Invalid email or password.",
-          variant: "destructive",
         })
       }
     } catch (error) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "An error occurred during login.",
-        variant: "destructive",
       })
     } finally {
       setLoading(false)
@@ -94,11 +87,6 @@ export function LoginForm() {
               Sign up
             </Link>
           </p>
-          <div className="mt-4 p-3 bg-gray-50 rounded-md">
-            <p className="text-xs text-gray-600 mb-2">Demo credentials:</p>
-            <p className="text-xs">Admin: admin@postershop.com / admin123</p>
-            <p className="text-xs">User: any@email.com / password123</p>
-          </div>
         </div>
       </CardContent>
     </Card>
