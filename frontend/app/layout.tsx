@@ -5,8 +5,7 @@ import "./globals.css"
 import { AuthProvider } from "@/components/auth-provider"
 import { CartProvider } from "@/components/cart-provider"
 import { WishlistProvider } from "@/components/wishlist-provider"
-import { Toaster } from "@/components/ui/toaster"
-
+import { Toaster } from "sonner"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ export default function RootLayout({
           <CartProvider>
             <WishlistProvider>
               {children}
-              <Toaster />
+              <Toaster position="top-right" richColors />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

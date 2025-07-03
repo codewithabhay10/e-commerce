@@ -21,7 +21,7 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-primary">
-            PosterShop
+            Pixel Patrika
           </Link>
 
           {/* Search Bar - Hidden on mobile */}

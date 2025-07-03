@@ -2,8 +2,11 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import type { Product } from "@/lib/types"
+import { useAuth } from "@/components/auth-provider" // ✅ import auth
+import { toast } from "sonner"
 
 interface CartItem extends Product {
+  id: string
   quantity: number
   size?: string
 }
@@ -21,6 +24,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth() // ✅ get current user
   const [items, setItems] = useState<CartItem[]>([])
 
   useEffect(() => {
@@ -35,18 +39,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items])
 
   const addItem = (product: Product, quantity = 1) => {
+    if (!user) {
+      toast.error("Please log in to add items to the cart.")
+      return
+    }
+
     setItems((currentItems) => {
-      const existingItem = currentItems.find((item) => item.id === product.id && item.size === (product as any).size)
+      const existingItem = currentItems.find(
+        (item) => item.id === product._id && item.size === (product as any).size
+      )
 
       if (existingItem) {
         return currentItems.map((item) =>
-          item.id === product.id && item.size === (product as any).size
+          item.id === product._id && item.size === (product as any).size
             ? { ...item, quantity: item.quantity + quantity }
-            : item,
+            : item
         )
       }
 
-      return [...currentItems, { ...product, quantity }]
+      return [...currentItems, { ...product, id: product._id, quantity }]
     })
   }
 
@@ -60,7 +71,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    setItems((currentItems) => currentItems.map((item) => (item.id === productId ? { ...item, quantity } : item)))
+    setItems((currentItems) =>
+      currentItems.map((item) => (item.id === productId ? { ...item, quantity } : item))
+    )
   }
 
   const clearCart = () => {

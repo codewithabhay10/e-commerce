@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4">PosterShop</h3>
+            <h3 className="text-xl font-bold mb-4">Pixel Patrika</h3>
             <p className="text-gray-400 mb-4">
               Premium quality posters for your space. Transform your walls with our curated collection.
             </p>
@@ -91,7 +91,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 PosterShop. All rights reserved.</p>
+          <p>&copy; 2024 Pixel Patrika. All rights reserved.</p>
         </div>
       </div>
     </footer>

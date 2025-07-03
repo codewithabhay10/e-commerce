@@ -45,7 +45,7 @@ export function Categories() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category) => (
-            <Link key={category.id} href={`/categories/${category.id}`}>
+            <Link key={category.id} href={`/shop`}>
               <Card className="group hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
