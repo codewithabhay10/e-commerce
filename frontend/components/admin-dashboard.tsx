@@ -44,13 +44,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/components/auth-provider";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import type { Product } from "@/lib/types";
-import { title } from "process";
 
 export function AdminDashboard() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
@@ -65,15 +63,12 @@ export function AdminDashboard() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products/"); // ✅ correct
-
+        const res = await fetch("http://localhost:5000/api/products/");
         const data = await res.json();
         setProducts(data);
       } catch {
-        toast({
-          title: "Error",
+        toast.error("Error", {
           description: "Failed to load products.",
-          variant: "destructive",
         });
       }
     };
@@ -95,7 +90,6 @@ export function AdminDashboard() {
   }
 
   const handleAddProduct = async () => {
-    // Validate required fields
     const missingFields: string[] = [];
     if (!newProduct.title) missingFields.push("Title");
     if (!newProduct.price) missingFields.push("Price");
@@ -103,13 +97,12 @@ export function AdminDashboard() {
       missingFields.push("Valid Price");
 
     if (missingFields.length > 0) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: `Please provide: ${missingFields.join(", ")}.`,
-        variant: "destructive",
       });
       return;
     }
+
     try {
       const res = await fetch("http://localhost:5000/api/products/", {
         method: "POST",
@@ -138,15 +131,12 @@ export function AdminDashboard() {
       });
       setIsAddDialogOpen(false);
 
-      toast({
-        title: "Product added",
+      toast.success("Product added", {
         description: "New product has been added successfully.",
       });
     } catch {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Could not add product.",
-        variant: "destructive",
       });
     }
   };
@@ -155,23 +145,18 @@ export function AdminDashboard() {
     try {
       const res = await fetch(
         `http://localhost:5000/api/products/${productId}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
 
       if (!res.ok) throw new Error("Delete failed");
-      setProducts(products.filter((p) => p._id !== productId));
 
-      toast({
-        title: "Product deleted",
+      setProducts(products.filter((p) => p._id !== productId));
+      toast.success("Product deleted", {
         description: "Product has been removed successfully.",
       });
     } catch {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to delete product.",
-        variant: "destructive",
       });
     }
   };
@@ -314,15 +299,12 @@ export function AdminDashboard() {
                             ...prev,
                             image: data.url,
                           }));
-                          toast({
-                            title: "Upload successful",
+                          toast.success("Upload successful", {
                             description: "Image uploaded and ready to use.",
                           });
                         } catch {
-                          toast({
-                            title: "Upload failed",
+                          toast.error("Upload failed", {
                             description: "Could not upload image.",
-                            variant: "destructive",
                           });
                         }
                       }}

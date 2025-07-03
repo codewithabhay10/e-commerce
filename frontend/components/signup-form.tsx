@@ -1,15 +1,20 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { useAuth } from "@/components/auth-provider"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function SignupForm() {
   const [fullname, setFullname] = useState("")
@@ -17,17 +22,14 @@ export function SignupForm() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const { signup } = useAuth()
-  const { toast } = useToast()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!fullname || !email || !password) {
-      toast({
-        title: "Missing fields",
+      toast("Missing fields", {
         description: "Please fill in all fields.",
-        variant: "destructive",
       })
       return
     }
@@ -37,23 +39,18 @@ export function SignupForm() {
     try {
       const success = await signup(email, password, fullname)
       if (success) {
-        toast({
-          title: "Account created",
+        toast.success("Account created", {
           description: "Welcome to PosterShop!",
         })
         router.push("/")
       } else {
-        toast({
-          title: "Signup failed",
+        toast.error("Signup failed", {
           description: "An error occurred during signup.",
-          variant: "destructive",
         })
       }
     } catch (error) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "An error occurred during signup.",
-        variant: "destructive",
       })
     } finally {
       setLoading(false)
@@ -64,12 +61,14 @@ export function SignupForm() {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle>Sign Up</CardTitle>
-        <CardDescription>Create your account to start shopping</CardDescription>
+        <CardDescription>
+          Create your account to start shopping
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium mb-1">
+            <label htmlFor="fullname" className="block text-sm font-medium mb-1">
               Full Name
             </label>
             <Input

@@ -6,25 +6,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { useWishlist } from "@/components/wishlist-provider"
 import { useCart } from "@/components/cart-provider"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function WishlistPage() {
   const { items, removeFromWishlist, clearWishlist } = useWishlist()
   const { addItem } = useCart()
-  const { toast } = useToast()
 
   const handleAddToCart = (product: any) => {
     addItem(product)
-    toast({
-      title: "Added to cart",
+    toast.success("Added to cart", {
       description: `${product.title} has been added to your cart.`,
     })
   }
 
   const handleRemoveFromWishlist = (productId: string, title: string) => {
     removeFromWishlist(productId)
-    toast({
-      title: "Removed from wishlist",
+    toast.error("Removed from wishlist", {
       description: `${title} has been removed from your wishlist.`,
     })
   }
@@ -48,7 +45,12 @@ export function WishlistPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Wishlist</h1>
-        <Button variant="outline" onClick={clearWishlist}>
+        <Button variant="outline" onClick={() => {
+          clearWishlist()
+          toast.error("Wishlist cleared", {
+            description: "All items have been removed from your wishlist.",
+          })
+        }}>
           Clear Wishlist
         </Button>
       </div>
@@ -93,7 +95,10 @@ export function WishlistPage() {
                     <ShoppingCart className="h-4 w-4 mr-2" />
                     Add to Cart
                   </Button>
-                  <Button variant="outline" onClick={() => handleRemoveFromWishlist(product._id, product.title)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleRemoveFromWishlist(product._id, product.title)}
+                  >
                     <Heart className="h-4 w-4 fill-red-500 text-red-500" />
                   </Button>
                 </div>

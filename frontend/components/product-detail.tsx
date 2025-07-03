@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select"
 import { useCart } from "@/components/cart-provider"
 import { useWishlist } from "@/components/wishlist-provider"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 import type { Product } from "@/lib/types"
 
 export function ProductDetail() {
@@ -27,7 +27,6 @@ export function ProductDetail() {
 
   const { addItem } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
-  const { toast } = useToast()
 
   useEffect(() => {
     if (!id) return
@@ -68,8 +67,7 @@ export function ProductDetail() {
       },
       quantity
     )
-    toast({
-      title: "Added to cart",
+    toast.success("Added to cart", {
       description: `${quantity}x ${product.title} has been added to your cart.`,
     })
   }
@@ -77,10 +75,14 @@ export function ProductDetail() {
   const handleWishlistToggle = () => {
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id)
-      toast({ title: "Removed from wishlist", description: `${product.title} removed.` })
+      toast("Removed from wishlist", {
+        description: `${product.title} removed.`,
+      })
     } else {
       addToWishlist(product)
-      toast({ title: "Added to wishlist", description: `${product.title} added.` })
+      toast("Added to wishlist", {
+        description: `${product.title} added.`,
+      })
     }
   }
 

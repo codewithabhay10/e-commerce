@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { CreditCard, Lock } from "lucide-react"
@@ -11,12 +10,11 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCart } from "@/components/cart-provider"
 import { useAuth } from "@/components/auth-provider"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export function CheckoutPage() {
   const { items, total, clearCart } = useCart()
   const { user } = useAuth()
-  const { toast } = useToast()
   const router = useRouter()
 
   const [loading, setLoading] = useState(false)
@@ -50,8 +48,7 @@ export function CheckoutPage() {
     // Simulate payment processing
     setTimeout(() => {
       clearCart()
-      toast({
-        title: "Order placed successfully!",
+      toast.success("Order placed successfully!", {
         description: "Thank you for your purchase. You'll receive a confirmation email shortly.",
       })
       router.push("/orders")
