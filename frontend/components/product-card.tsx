@@ -1,45 +1,50 @@
-"use client"
+"use client";
 
-import type React from "react"
-import Link from "next/link"
-import { Heart, ShoppingCart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { useCart } from "@/components/cart-provider"
-import { useWishlist } from "@/components/wishlist-provider"
-import { toast } from "sonner"
-import type { Product } from "@/lib/types"
+import type React from "react";
+import Link from "next/link";
+import { Heart, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useCart } from "@/components/cart-provider";
+import { useWishlist } from "@/components/wishlist-provider";
+import { toast } from "sonner";
+import type { Product } from "@/lib/types";
+import { useAuth } from "@/components/auth-provider";
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = useCart()
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const { addItem } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { user } = useAuth();
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
-    addItem(product)
+    e.preventDefault();
+    addItem(product);
+    if (!user) {
+      return;
+    }
     toast.success("Added to cart", {
       description: `${product.title} has been added to your cart.`,
-    })
-  }
+    });
+  };
 
   const handleWishlistToggle = (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (isInWishlist(product._id)) {
-      removeFromWishlist(product._id)
+      removeFromWishlist(product._id);
       toast("Removed from wishlist", {
         description: `${product.title} has been removed from your wishlist.`,
-      })
+      });
     } else {
-      addToWishlist(product)
+      addToWishlist(product);
       toast("Added to wishlist", {
         description: `${product.title} has been added to your wishlist.`,
-      })
+      });
     }
-  }
+  };
 
   return (
     <Link href={`/product/${product._id}`}>
@@ -106,5 +111,5 @@ export function ProductCard({ product }: ProductCardProps) {
         </CardContent>
       </Card>
     </Link>
-  )
+  );
 }
