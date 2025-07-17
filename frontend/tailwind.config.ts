@@ -60,7 +60,18 @@ const config: Config = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+  			'pastel-pink': '#FFD1DC',
+  			'mustard': '#FFDB58',
+  			'terracotta': '#E2725B',
+  			'pastel-pink-foreground': '#FFB6C1',
+  			'mustard-foreground': '#FFF8DC',
+  			'terracotta-foreground': '#F4A460'
+  		},
+  		fontFamily: {
+  			sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+  			serif: ['var(--font-serif)', 'Georgia', 'serif'],
+  			mono: ['var(--font-mono)', 'Menlo', 'monospace']
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

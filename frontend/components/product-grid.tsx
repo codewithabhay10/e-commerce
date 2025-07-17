@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select"
 import type { Product } from "@/lib/types"
 
+
 const productsPerPage = 12
 
 export function ProductGrid() {

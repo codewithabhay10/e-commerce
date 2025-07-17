@@ -16,6 +16,8 @@ import { useCart } from "@/components/cart-provider"
 import { useWishlist } from "@/components/wishlist-provider"
 import { toast } from "sonner"
 import type { Product } from "@/lib/types"
+import { useAuth } from "@/components/auth-provider"
+
 
 export function ProductDetail() {
   const { id } = useParams()
@@ -27,6 +29,7 @@ export function ProductDetail() {
 
   const { addItem } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const { user } = useAuth()
 
   useEffect(() => {
     if (!id) return
@@ -59,6 +62,10 @@ export function ProductDetail() {
   const finalPrice = product.sale ? product.salePrice || product.price : selectedSizeData?.price || product.price
 
   const handleAddToCart = () => {
+    if (!user) {
+      toast.error("You must be logged in to add items to the cart.")
+      return
+    }
     addItem(
       {
         ...product,
@@ -73,6 +80,10 @@ export function ProductDetail() {
   }
 
   const handleWishlistToggle = () => {
+    if (!user) {
+      toast.error("You must be logged in to add items to the wishlist.")
+      return
+    }
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id)
       toast("Removed from wishlist", {
