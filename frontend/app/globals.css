@@ -68,8 +68,6 @@
   transform: translateY(-5px);
 }
 
-
-
 .marquee-container {
   display: flex;
   overflow: hidden;
@@ -104,9 +102,8 @@
   }
 
   .poster-gallery-track {
-  @apply flex animate-scroll-left;
-}
-
+    @apply flex animate-scroll-left;
+  }
 
   .poster-gallery-track-reverse {
     animation: scroll-right 40s linear infinite;
@@ -162,7 +159,6 @@
     animation: scroll-right 40s linear infinite;
   }
 }
-
 
 /* Marquee animation for continuous scrolling text - Increased Speed */
 @keyframes marquee {

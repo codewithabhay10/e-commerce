@@ -18,7 +18,7 @@ export function HeroSection() {
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1920&h=1080&fit=crop&auto=format",
+        "https://res.cloudinary.com/dexibzteg/image/upload/v1752874681/plakati-na-stenu-v-komnatu-dizain-instagra-14_qm0srx.jpg",
       title: "Curate Your Walls with",
       subtitle: "Pixel-Perfect Art",
       accent: "Transform your space into a personal gallery",
@@ -26,7 +26,7 @@ export function HeroSection() {
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=1920&h=1080&fit=crop&auto=format",
+        "https://res.cloudinary.com/dexibzteg/image/upload/v1752874678/are-my-walls-too-busy-v0-bkb4a04qvq7c1_jigihl.webp",
       title: "Discover Art That",
       subtitle: "Speaks to You",
       accent: "Handpicked designs for every aesthetic",
@@ -34,7 +34,7 @@ export function HeroSection() {
     {
       id: 3,
       image:
-        "https://images.unsplash.com/photo-1517991104123-1d56a6e81ed9?w=1920&h=1080&fit=crop&auto=format",
+        "https://res.cloudinary.com/dexibzteg/image/upload/v1752874677/471665112_1011097597701658_4652422441578306758_n_zxhtzy.jpg",
       title: "Express Yourself with",
       subtitle: "Premium Prints",
       accent: "Museum-quality posters at accessible prices",
@@ -42,7 +42,7 @@ export function HeroSection() {
     {
       id: 4,
       image:
-        "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=1920&h=1080&fit=crop&auto=format",
+        "https://res.cloudinary.com/dexibzteg/image/upload/v1752874677/2e7ff8a174bdac1241f84ff4782e27cb_c2subj.jpg",
       title: "Create Spaces That",
       subtitle: "Inspire You",
       accent: "From minimalist to maximalist, we have it all",
@@ -98,7 +98,7 @@ export function HeroSection() {
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#e77c6c66] to-transparent" />
+            <div className="absolute inset-0" />
           </div>
         ))}
       </div>

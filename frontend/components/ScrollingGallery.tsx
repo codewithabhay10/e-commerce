@@ -1,24 +1,26 @@
-import React from 'react';
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
+
 
 export function ScrollingGallery() {
   // Images of posters on walls in various settings
   const posterImages = [
-    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop', // Living room with art
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop', // Office with posters
-    'https://images.unsplash.com/photo-1493663284031-b7e3aaa4cab7?w=300&h=200&fit=crop', // Gallery wall
-    'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=300&h=200&fit=crop', // Modern room with art
-    'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&h=200&fit=crop', // Stylish office
-    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=300&h=200&fit=crop', // Bedroom with wall art
-    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop', // Another living space
-    'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=300&h=200&fit=crop', // Kitchen with art
-    'https://images.unsplash.com/photo-1560449752-ac4d8e4d6d4d?w=300&h=200&fit=crop', // Modern gallery
-    'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=300&h=200&fit=crop', // Cozy room
-    'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop', // Living room
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=300&h=200&fit=crop', // Office space
-    'https://images.unsplash.com/photo-1493663284031-b7e3aaa4cab7?w=300&h=200&fit=crop', // Art gallery
-    'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=300&h=200&fit=crop', // Designer room
-    'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=300&h=200&fit=crop', // Corporate office
-    'https://images.unsplash.com/photo-1554995207-c18c203602cb?w=300&h=200&fit=crop', // Bedroom decor
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752840859/Screenshot_2025-07-18_173642_dtwxkp.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752840859/Screenshot_2025-07-18_173653_lnotfw.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752840859/Screenshot_2025-07-18_174202_gea3hi.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841029/Screenshot_2025-07-18_174556_gjdcs6.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/c_crop,w_1142,h_738,x_0,y_0/v1752841029/Screenshot_2025-07-18_174628_vehppc.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841029/Screenshot_2025-07-18_174640_ro7wil.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841029/Screenshot_2025-07-18_174618_yjfupx.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841281/Screenshot_2025-07-18_174840_o9ploj.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841281/Screenshot_2025-07-18_175018_dzfsc0.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752841570/Screenshot_2025-07-18_175520_uha2jy.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/c_pad,ar_4:3/v1752841570/Screenshot_2025-07-18_175545_abwqnq.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752871763/Screenshot_2025-07-19_021515_z1ffpk.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752871762/Screenshot_2025-07-19_021733_g4lfj8.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752871762/Screenshot_2025-07-19_021712_hyhseq.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752871762/Screenshot_2025-07-19_021443_m1rssy.png",
   ];
 
   // Different sets for each row to avoid repetition
@@ -32,13 +34,21 @@ export function ScrollingGallery() {
   return (
     <section className="py-12 bg-gradient-to-b from-background to-secondary/20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="text-center">
-          <h2 className="mb-4 text-charcoal">See Your Space Transformed</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover how our premium posters look in real homes, offices, and creative spaces. 
-            Get inspired by our customer showcase.
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          viewport={{ once: true }}
+          className="text-center py-12 px-4"
+        >
+          <h2 className="mb-4 text-charcoal text-3xl font-bold tracking-tight animate-fade-in-up">
+            See Your Space Transformed
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg animate-fade-in-up delay-150">
+            Discover how our premium posters look in real homes, offices, and
+            creative spaces. Get inspired by our customer showcase.
           </p>
-        </div>
+        </motion.div>
       </div>
 
       <div className="space-y-6">
@@ -50,14 +60,9 @@ export function ScrollingGallery() {
                 <img
                   src={image}
                   alt={`Poster showcase ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded-lg cursor-pointer"
                   loading="lazy"
                 />
-                <div className="poster-gallery-overlay">
-                  <div className="poster-gallery-badge">
-                    <span className="text-xs font-medium">Shop This Look</span>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
@@ -71,14 +76,9 @@ export function ScrollingGallery() {
                 <img
                   src={image}
                   alt={`Poster showcase ${index + 9}`}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover rounded-lg cursor-pointer"
                   loading="lazy"
                 />
-                <div className="poster-gallery-overlay">
-                  <div className="poster-gallery-badge">
-                    <span className="text-xs font-medium">Shop This Look</span>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
