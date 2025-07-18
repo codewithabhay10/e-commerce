@@ -50,10 +50,126 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* globals.css */
+.artistic-shadow {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+}
+
+
+
+.marquee-container {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-content {
+  display: flex;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 1.5rem;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .marquee-item {
+    padding: 0 1rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Custom gallery scrolling animation */
+@layer components {
+  .poster-gallery-row {
+    @apply overflow-hidden whitespace-nowrap;
+  }
+
+  .poster-gallery-track {
+  @apply flex animate-scroll-left;
+}
+
+
+  .poster-gallery-track-reverse {
+    animation: scroll-right 40s linear infinite;
+  }
+
+  .poster-gallery-item {
+    @apply relative mx-2 w-72 h-48 rounded-lg overflow-hidden;
+    flex-shrink: 0;
+  }
+
+  .poster-gallery-overlay {
+    @apply absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center;
+  }
+
+  .poster-gallery-badge {
+    @apply bg-white text-charcoal px-4 py-2 rounded-full shadow-md;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-50%);
+    }
+    100% {
+      transform: translateX(0%);
+    }
+  }
+
+  /* Optional elevation + hover effect */
+  .artistic-shadow {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-3px);
+  }
+}
+
+@layer utilities {
+  .animate-scroll-left {
+    animation: scroll-left 40s linear infinite;
+  }
+
+  .animate-scroll-right {
+    animation: scroll-right 40s linear infinite;
+  }
+}
+
+
+/* Marquee animation for continuous scrolling text - Increased Speed */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }

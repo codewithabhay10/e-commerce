@@ -64,9 +64,10 @@ const config: Config = {
   			'pastel-pink': '#FFD1DC',
   			'mustard': '#FFDB58',
   			'terracotta': '#E2725B',
+			'charcoal': '#333333',
   			'pastel-pink-foreground': '#FFB6C1',
   			'mustard-foreground': '#FFF8DC',
-  			'terracotta-foreground': '#F4A460'
+  			'terracotta-foreground': '#F4A460',
   		},
   		fontFamily: {
   			sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
@@ -94,14 +95,20 @@ const config: Config = {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+			'marquee': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
   		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
+		 animation: {
+        marquee: 'marquee 30s linear infinite',
+		'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
-  	}
+	  },
+	},
   },
   plugins: [require("tailwindcss-animate")],
 };
+
 export default config;
