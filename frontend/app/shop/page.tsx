@@ -13,10 +13,11 @@ export default function ShopPage() {
     sizes: [] as string[],
     rating: 0,
   })
+  const [search, setSearch] = useState("")
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header search={search} setSearch={setSearch} />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <aside className="lg:w-64">
@@ -31,7 +32,7 @@ export default function ShopPage() {
             />
           </aside>
           <div className="flex-1">
-            <ProductGrid filters={filters} />
+            <ProductGrid filters={filters} search={search} />
           </div>
         </div>
       </main>

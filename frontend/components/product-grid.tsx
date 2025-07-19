@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,14 +24,19 @@ interface Filters {
 
 interface ProductGridProps {
   filters: Filters
+  search: string
 }
 
-export function ProductGrid({ filters }: ProductGridProps) {
+export function ProductGrid({ filters, search }: ProductGridProps) {
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [sortBy, setSortBy] = useState("featured")
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+
+  // Get search query from URL
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get("q")?.trim().toLowerCase() || ""
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,6 +63,11 @@ export function ProductGrid({ filters }: ProductGridProps) {
         if (filters.categories.length > 0 && !filters.categories.includes(product.category)) return false
         if (filters.rating > 0 && product.rating < filters.rating) return false
 
+        // Use search prop
+        if (search && !product.title.toLowerCase().includes(search.trim().toLowerCase())) {
+          return false
+        }
+
         return true
       })
     }
@@ -64,7 +75,7 @@ export function ProductGrid({ filters }: ProductGridProps) {
     const sorted = sortProducts(applyFilters(allProducts), sortBy)
     setFilteredProducts(sorted)
     setCurrentPage(1)
-  }, [allProducts, filters, sortBy])
+  }, [allProducts, filters, sortBy, search])
 
   const sortProducts = (products: Product[], sortBy: string) => {
     switch (sortBy) {
@@ -125,7 +136,7 @@ export function ProductGrid({ filters }: ProductGridProps) {
             </svg>
           </div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your filters to see more results.</p>
+          <p className="text-gray-500 mb-4">Try adjusting your filters or search to see more results.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
