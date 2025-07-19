@@ -169,3 +169,8 @@
     transform: translateX(-50%);
   }
 }
+
+
+html, body {
+  overflow-x: hidden;
+}

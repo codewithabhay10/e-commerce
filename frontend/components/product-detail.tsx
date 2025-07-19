@@ -158,7 +158,9 @@ export function ProductDetail() {
                 <span className="text-3xl font-bold">₹{finalPrice}</span>
               )}
             </div>
-            <p className="text-gray-600 leading-relaxed">{product.description}</p>
+            <p className="text-gray-700 leading-relaxed whitespace-pre-line max-w-xl">
+              {product.description}
+            </p>
           </div>
 
           {/* Size Selection */}

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation"; // Import useRouter
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { ArrowRight } from "lucide-react";
 
@@ -13,7 +14,24 @@ interface Category {
   description: string;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  show: { opacity: 1, scale: 1 },
+};
+
 export function Categories() {
+  const router = useRouter(); // Initialize useRouter
+
   const categories: Category[] = [
     {
       id: "bollywood",
@@ -114,14 +132,13 @@ export function Categories() {
   ];
 
   const handleCategoryClick = (category: string) => {
-    console.log("Navigate to:", category);
+    router.push(`/shop?category=${encodeURIComponent(category)}`); // Navigate to /shop with category query
   };
 
   return (
-    <section className="py-2 bg-secondary/30 overflow-x-hidden">
+    <section className="py-10 bg-secondary/30 overflow-x-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -138,23 +155,28 @@ export function Categories() {
           </p>
         </motion.div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {categories.map((category, index) => (
+        {/* Categories Grid with staggered animation */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6"
+        >
+          {categories.map((category) => (
             <motion.div
               key={category.id}
-              onClick={() => handleCategoryClick(category.name)}
+              variants={cardVariants}
+              onClick={() => handleCategoryClick(category.name)} // Call handleCategoryClick
               className="group cursor-pointer hover-lift"
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-              viewport={{ once: true }}
+              style={{ willChange: "opacity, transform" }}
             >
               <div className="relative overflow-hidden rounded-xl artistic-shadow bg-white">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <ImageWithFallback
                     src={category.image}
                     alt={category.name}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -178,7 +200,7 @@ export function Categories() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* View All Button */}
         <motion.div

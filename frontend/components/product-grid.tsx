@@ -151,7 +151,10 @@ export function ProductGrid({ filters, search }: ProductGridProps) {
         <div className="flex justify-center items-center space-x-2">
           <Button
             variant="outline"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            onClick={() => {
+              setCurrentPage((prev) => Math.max(prev - 1, 1))
+              document.documentElement.scrollTo({ top: 0, behavior: "smooth" }) // Scroll to top of the document
+            }}
             disabled={currentPage === 1}
           >
             Previous
@@ -161,7 +164,10 @@ export function ProductGrid({ filters, search }: ProductGridProps) {
           </span>
           <Button
             variant="outline"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() => {
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              document.documentElement.scrollTo({ top: 0, behavior: "smooth" }) // Scroll to top of the document
+            }}
             disabled={currentPage === totalPages}
           >
             Next
