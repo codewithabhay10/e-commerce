@@ -64,7 +64,7 @@ export function CartPage() {
                       {item.size && `Size: ${item.size}`}
                     </p>
                     <p className="text-lg font-bold">
-                      ${item.sale ? item.salePrice || item.price : item.price}
+                      ₹{item.sale ? item.salePrice || item.price : item.price}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -114,7 +114,7 @@ export function CartPage() {
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
@@ -122,12 +122,12 @@ export function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span>${(total * 0.08).toFixed(2)}</span>
+                  <span>₹{(total * 0.08).toFixed(2)}</span>
                 </div>
                 <hr />
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total</span>
-                  <span>${(total * 1.08).toFixed(2)}</span>
+                  <span>₹{(total * 1.08).toFixed(2)}</span>
                 </div>
               </div>
               <Link href="/checkout">

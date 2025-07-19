@@ -88,14 +88,14 @@ export function ProductCard({ product }: ProductCardProps) {
                 {product.sale ? (
                   <>
                     <span className="text-lg font-bold text-red-600">
-                      ${product.salePrice}
+                      ₹{product.salePrice}
                     </span>
                     <span className="text-sm text-gray-500 line-through">
-                      ${product.price}
+                      ₹{product.price}
                     </span>
                   </>
                 ) : (
-                  <span className="text-lg font-bold">${product.price}</span>
+                  <span className="text-lg font-bold">₹{product.price}</span>
                 )}
               </div>
               <Button

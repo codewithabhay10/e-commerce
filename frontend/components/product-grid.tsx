@@ -12,11 +12,22 @@ import {
 } from "@/components/ui/select"
 import type { Product } from "@/lib/types"
 
-
 const productsPerPage = 12
 
-export function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>([])
+interface Filters {
+  priceRange: [number, number]
+  categories: string[]
+  sizes: string[]
+  rating: number
+}
+
+interface ProductGridProps {
+  filters: Filters
+}
+
+export function ProductGrid({ filters }: ProductGridProps) {
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [sortBy, setSortBy] = useState("featured")
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -26,16 +37,34 @@ export function ProductGrid() {
       try {
         const res = await fetch("http://localhost:5000/api/products")
         const data = await res.json()
-        setProducts(data)
+        setAllProducts(data)
+        setLoading(false)
       } catch (err) {
         console.error("Failed to load products:", err)
-      } finally {
         setLoading(false)
       }
     }
 
     fetchProducts()
   }, [])
+
+  useEffect(() => {
+    const applyFilters = (products: Product[]) => {
+      return products.filter((product) => {
+        const price = product.sale ? product.salePrice ?? product.price : product.price
+
+        if (price < filters.priceRange[0] || price > filters.priceRange[1]) return false
+        if (filters.categories.length > 0 && !filters.categories.includes(product.category)) return false
+        if (filters.rating > 0 && product.rating < filters.rating) return false
+
+        return true
+      })
+    }
+
+    const sorted = sortProducts(applyFilters(allProducts), sortBy)
+    setFilteredProducts(sorted)
+    setCurrentPage(1)
+  }, [allProducts, filters, sortBy])
 
   const sortProducts = (products: Product[], sortBy: string) => {
     switch (sortBy) {
@@ -46,16 +75,17 @@ export function ProductGrid() {
       case "name":
         return [...products].sort((a, b) => a.title.localeCompare(b.title))
       case "newest":
-        return [...products].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        return [...products].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
       default:
         return products
     }
   }
 
-  const sortedProducts = sortProducts(products, sortBy)
-  const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
   const startIndex = (currentPage - 1) * productsPerPage
-  const currentProducts = sortedProducts.slice(startIndex, startIndex + productsPerPage)
+  const currentProducts = filteredProducts.slice(startIndex, startIndex + productsPerPage)
 
   return (
     <div>
@@ -63,7 +93,7 @@ export function ProductGrid() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-bold">All Posters</h1>
-          <p className="text-gray-600">{sortedProducts.length} products found</p>
+          <p className="text-gray-600">{filteredProducts.length} products found</p>
         </div>
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="w-48">
@@ -82,6 +112,21 @@ export function ProductGrid() {
       {/* Product Grid */}
       {loading ? (
         <p>Loading...</p>
+      ) : currentProducts.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-gray-400 mb-4">
+            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.071-2.33"
+              />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+          <p className="text-gray-500 mb-4">Try adjusting your filters to see more results.</p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {currentProducts.map((product) => (

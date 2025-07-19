@@ -60,6 +60,10 @@ export function AdminDashboard() {
     image: "",
   });
 
+  // Edit dialog state
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -161,6 +165,49 @@ export function AdminDashboard() {
     }
   };
 
+  // Edit product handler
+  const handleEditProduct = async () => {
+    if (!editProduct) return;
+    const missingFields: string[] = [];
+    if (!editProduct.title) missingFields.push("Title");
+    if (!editProduct.price) missingFields.push("Price");
+    if (editProduct.price && isNaN(Number(editProduct.price)))
+      missingFields.push("Valid Price");
+
+    if (missingFields.length > 0) {
+      toast.error("Error", {
+        description: `Please provide: ${missingFields.join(", ")}.`,
+      });
+      return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/products/${editProduct._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editProduct.title,
+          description: editProduct.description,
+          price: Number(editProduct.price),
+          category: editProduct.category,
+          image: editProduct.image,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update product");
+      const updated = await res.json();
+      setProducts(products.map((p) => (p._id === updated._id ? updated : p)));
+      setIsEditDialogOpen(false);
+      setEditProduct(null);
+      toast.success("Product updated", {
+        description: "Product has been updated successfully.",
+      });
+    } catch {
+      toast.error("Error", {
+        description: "Could not update product.",
+      });
+    }
+  };
+
   const stats = [
     {
       title: "Total Products",
@@ -176,7 +223,7 @@ export function AdminDashboard() {
     },
     {
       title: "Total Revenue",
-      value: "$12,450",
+      value: "₹12,450",
       icon: DollarSign,
       color: "text-yellow-600",
     },
@@ -266,9 +313,15 @@ export function AdminDashboard() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="abstract">Abstract</SelectItem>
+                      <SelectItem value="bollywood">Bollywood</SelectItem>
                       <SelectItem value="anime">Anime</SelectItem>
-                      <SelectItem value="quotes">Quotes</SelectItem>
+                      <SelectItem value="basketball">Basketball</SelectItem>
+                      <SelectItem value="cricket">Cricket</SelectItem>
+                      <SelectItem value="music">Music</SelectItem>
+                      <SelectItem value="abstract">Abstract</SelectItem>
+                      <SelectItem value="motivation">Motivation</SelectItem>
+                      <SelectItem value="television">Television</SelectItem>
+                      <SelectItem value="sports">Sports</SelectItem>
                       <SelectItem value="nature">Nature</SelectItem>
                       <SelectItem value="vintage">Vintage</SelectItem>
                       <SelectItem value="minimalist">Minimalist</SelectItem>
@@ -360,11 +413,18 @@ export function AdminDashboard() {
                   <TableCell className="capitalize">
                     {product.category}
                   </TableCell>
-                  <TableCell>${product.price}</TableCell>
+                  <TableCell>₹{product.price}</TableCell>
                   <TableCell>{product.rating || 5}/5</TableCell>
                   <TableCell>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setEditProduct(product);
+                          setIsEditDialogOpen(true);
+                        }}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
@@ -382,6 +442,130 @@ export function AdminDashboard() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Product Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+            <DialogDescription>
+              Update the details for this poster
+            </DialogDescription>
+          </DialogHeader>
+          {editProduct && (
+            <div className="space-y-4">
+              <Input
+                placeholder="Poster title"
+                value={editProduct.title}
+                onChange={(e) =>
+                  setEditProduct({ ...editProduct, title: e.target.value })
+                }
+              />
+              <Textarea
+                placeholder="Product description"
+                value={editProduct.description}
+                onChange={(e) =>
+                  setEditProduct({
+                    ...editProduct,
+                    description: e.target.value,
+                  })
+                }
+              />
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="0.00"
+                value={editProduct.price}
+                onChange={(e) =>
+                  setEditProduct({ ...editProduct, price: Number(e.target.value) })
+                }
+              />
+              <Select
+                value={editProduct.category}
+                onValueChange={(value) =>
+                  setEditProduct({ ...editProduct, category: value })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bollywood">Bollywood</SelectItem>
+                  <SelectItem value="anime">Anime</SelectItem>
+                  <SelectItem value="basketball">Basketball</SelectItem>
+                  <SelectItem value="cricket">Cricket</SelectItem>
+                  <SelectItem value="music">Music</SelectItem>
+                  <SelectItem value="abstract">Abstract</SelectItem>
+                  <SelectItem value="motivation">Motivation</SelectItem>
+                  <SelectItem value="television">Television</SelectItem>
+                  <SelectItem value="sports">Sports</SelectItem>
+                  <SelectItem value="nature">Nature</SelectItem>
+                  <SelectItem value="vintage">Vintage</SelectItem>
+                  <SelectItem value="minimalist">Minimalist</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="space-y-2">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append("image", file);
+
+                    try {
+                      const res = await fetch(
+                        "http://localhost:5000/api/products/upload",
+                        {
+                          method: "POST",
+                          body: formData,
+                        }
+                      );
+
+                      const data = await res.json();
+                      setEditProduct((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              image: data.url,
+                            }
+                          : prev
+                      );
+                      toast.success("Upload successful", {
+                        description: "Image uploaded and ready to use.",
+                      });
+                    } catch {
+                      toast.error("Upload failed", {
+                        description: "Could not upload image.",
+                      });
+                    }
+                  }}
+                />
+                {editProduct.image && (
+                  <img
+                    src={editProduct.image}
+                    alt="Preview"
+                    className="w-24 h-24 rounded object-cover"
+                  />
+                )}
+              </div>
+              <div className="flex space-x-2">
+                <Button onClick={handleEditProduct} className="flex-1">
+                  Save Changes
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

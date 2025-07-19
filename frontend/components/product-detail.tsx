@@ -151,11 +151,11 @@ export function ProductDetail() {
             <div className="flex items-center space-x-3 mb-4">
               {product.sale ? (
                 <>
-                  <span className="text-3xl font-bold text-red-600">${finalPrice}</span>
-                  <span className="text-xl text-gray-500 line-through">${selectedSizeData?.price}</span>
+                  <span className="text-3xl font-bold text-red-600">₹{finalPrice}</span>
+                  <span className="text-xl text-gray-500 line-through">₹{selectedSizeData?.price}</span>
                 </>
               ) : (
-                <span className="text-3xl font-bold">${finalPrice}</span>
+                <span className="text-3xl font-bold">₹{finalPrice}</span>
               )}
             </div>
             <p className="text-gray-600 leading-relaxed">{product.description}</p>
@@ -171,7 +171,7 @@ export function ProductDetail() {
               <SelectContent>
                 {sizes.map((size) => (
                   <SelectItem key={size.id} value={size.id}>
-                    {size.name} - ${size.price}
+                    {size.name} - ₹{size.price}
                   </SelectItem>
                 ))}
               </SelectContent>

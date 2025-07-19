@@ -118,7 +118,7 @@ export function Categories() {
   };
 
   return (
-    <section className="py-10 bg-secondary/30 overflow-x-hidden">
+    <section className="py-2 bg-secondary/30 overflow-x-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
 

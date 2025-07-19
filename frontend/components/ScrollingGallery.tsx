@@ -16,7 +16,7 @@ export function ScrollingGallery() {
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752841281/Screenshot_2025-07-18_174840_o9ploj.png",
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752841281/Screenshot_2025-07-18_175018_dzfsc0.png",
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752841570/Screenshot_2025-07-18_175520_uha2jy.png",
-    "https://res.cloudinary.com/dexibzteg/image/upload/c_pad,ar_4:3/v1752841570/Screenshot_2025-07-18_175545_abwqnq.png",
+    "https://res.cloudinary.com/dexibzteg/image/upload/v1752874677/2e7ff8a174bdac1241f84ff4782e27cb_c2subj.jpg",
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752871763/Screenshot_2025-07-19_021515_z1ffpk.png",
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752871762/Screenshot_2025-07-19_021733_g4lfj8.png",
     "https://res.cloudinary.com/dexibzteg/image/upload/v1752871762/Screenshot_2025-07-19_021712_hyhseq.png",
